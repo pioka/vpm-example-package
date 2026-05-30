@@ -1,0 +1,17 @@
+name: Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - id: checkout
+        uses: actions/checkout@v4
+
+      - id: create_release
+        run: ./.github/scripts/release.sh

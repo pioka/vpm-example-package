@@ -1,6 +1,6 @@
 {
   "name": "io.github.yourusernamehere.exampletool",
-  "version": "1.0.0",
+  "version": "0.1.0-dev",
   "displayName": "Example Tool",
   "description": "Description Here.",
   "unity": "2022.3",
