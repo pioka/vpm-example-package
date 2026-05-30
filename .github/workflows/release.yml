@@ -15,3 +15,5 @@ jobs:
 
       - id: create_release
         run: ./.github/scripts/create_release.sh
+        env:
+          GH_TOKEN: ${{ github.token }}
