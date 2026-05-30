@@ -1,0 +1,12 @@
+{
+  "name": "io.github.yourusernamehere.exampletool",
+  "version": "1.0.0",
+  "displayName": "Example Tool",
+  "description": "Description Here.",
+  "unity": "2022.3",
+  "author": {
+    "name": "YourUserNameHere",
+    "url": "https://github.com/YourUserNameHere"
+  },
+  "license": "MIT"
+}

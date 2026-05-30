@@ -1,0 +1,14 @@
+{
+  "name": "io.github.your-username-here.example-tool.editor"
+  "rootNamespace": "YourUserNameHere.ExampleTool",
+  "references": [],
+  "includePlatforms": ["Editor"],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": false,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
