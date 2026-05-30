@@ -14,4 +14,4 @@ jobs:
         uses: actions/checkout@v4
 
       - id: create_release
-        run: ./.github/scripts/release.sh
+        run: ./.github/scripts/create_release.sh
