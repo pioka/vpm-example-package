@@ -37,7 +37,7 @@ done
 
 echo "$vpm_json" > vpm.json
 
-cat > "$OUT_DIR/index.html" <<HTML
+cat > index.html <<HTML
 <!DOCTYPE html>
 <html lang="en">
 <head>
