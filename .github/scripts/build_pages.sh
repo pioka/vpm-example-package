@@ -22,10 +22,10 @@ vpm_json="$(echo "$vpm_json" | jq --arg v "$GH_PAGES_BASE_URL/vpm.json" '.url = 
 for tag in $(gh release list --json tagName | jq -r '.[].tagName'); do
   release_json="$(gh release view "$tag" --json assets --jq '.assets[]|select(.name|test("^package.json$")).name' | head -1)"
   release_zip="$(gh release view "$tag" --json assets --jq '.assets[]|select(.name|test(".zip$")).name' | head -1)"
-  release_zip_sha256="$(gh release view "v0.1.0-dev" --json assets --jq '.assets[]|select(.name|test(".zip$")).digest' | head -1 | cut -d: -f2)"
+  release_zip_sha256="$(gh release view "$tag" --json assets --jq '.assets[]|select(.name|test(".zip$")).digest' | head -1 | cut -d: -f2)"
 
   if [ -n "$release_json" ] && [ -n "$release_zip" ]; then
-    gh release download --clobber --pattern "package.json"
+    gh release download "$tag" --clobber --pattern "package.json"
     release_json_content="$(jq . package.json)"
     release_json_content="$(echo "$release_json_content" | jq --arg v "https://github.com/${GITHUB_REPOSITORY}/releases/download/$tag/$release_zip" '.url = $v')"
     release_json_content="$(echo "$release_json_content" | jq --arg v "$release_zip_sha256" '.zipSHA256 = $v')"

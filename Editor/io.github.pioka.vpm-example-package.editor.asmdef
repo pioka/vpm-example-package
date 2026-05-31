@@ -1,5 +1,5 @@
 {
-  "name": "io.github.pioka.vpm-example-package.editor"
+  "name": "io.github.pioka.vpm-example-package.editor",
   "rootNamespace": "Pioka.VpmExamplePackage",
   "references": [],
   "includePlatforms": ["Editor"],
