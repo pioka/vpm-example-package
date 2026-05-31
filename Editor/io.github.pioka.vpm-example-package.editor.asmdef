@@ -1,6 +1,6 @@
 {
-  "name": "io.github.your-username-here.example-tool.editor"
-  "rootNamespace": "YourUserNameHere.ExampleTool",
+  "name": "io.github.pioka.vpm-example-package.editor"
+  "rootNamespace": "Pioka.VpmExamplePackage",
   "references": [],
   "includePlatforms": ["Editor"],
   "excludePlatforms": [],
