@@ -7,6 +7,7 @@ set -euo pipefail
 PACKAGE_NAME="$(jq -r '.displayName' package.json)"
 PACKAGE_ID="$(jq -r '.name' package.json)"
 PACKAGE_AUTHOR="$(jq -r '.author.name' package.json)"
+PACKAGE_DESCRIPTION="$(jq -r '.description // ""' package.json | sed 's/"/\&quot;/g')"
 
 rm -rf public && mkdir public
 pushd public
@@ -43,6 +44,7 @@ cat > index.html <<HTML
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="${PACKAGE_DESCRIPTION}">
   <title>${PACKAGE_NAME}</title>
 </head>
 <body>
