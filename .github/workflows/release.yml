@@ -52,7 +52,7 @@ jobs:
         uses: actions/configure-pages@v5
 
       - id: build_listing
-        run: ./.github/scripts/build_listing.sh
+        run: ./.github/scripts/build_pages.sh
         env:
           GH_TOKEN: ${{ github.token }}
           GH_PAGES_BASE_URL: ${{ steps.configure_pages.outputs.base_url }}
