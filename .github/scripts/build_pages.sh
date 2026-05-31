@@ -53,7 +53,7 @@ cat > index.html <<HTML
     <table>
       <tr>
         <td>${GH_PAGES_BASE_URL}/vpm.json</td>
-        <td><a href="vcc://vpm/addRepo?url=${GH_PAGES_BASE_URL}/vpm.json">Add to VCC</a></td>
+        <td><a href="vcc://vpm/addRepo?url=${GH_PAGES_BASE_URL}/vpm.json">[Add to VCC]</a></td>
       </tr>
     </table>
   </main>
