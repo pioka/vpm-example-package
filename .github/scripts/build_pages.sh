@@ -46,11 +46,13 @@ cat > index.html <<HTML
   <title>${PACKAGE_NAME}</title>
 </head>
 <body>
-  <h1>${PACKAGE_NAME}</h1>
-  <p>VPM listing for use with the VRChat Creator Companion (VCC).</p>
-  <p>
-    <a href="vcc://vpm/addRepo?url=${GH_PAGES_BASE_URL}/vpm.json">Add to VCC</a>
-  </p>
+  <main>
+    <h1>${PACKAGE_NAME}</h1>
+    <p>VPM listing for use with the VRChat Creator Companion (VCC).</p>
+    <p>
+      <a href="vcc://vpm/addRepo?url=${GH_PAGES_BASE_URL}/vpm.json">Add to VCC</a>
+    </p>
+  </main>
 </body>
 </html>
 HTML
