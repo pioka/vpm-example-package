@@ -2,13 +2,24 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        type: choice
+        required: true
+        default: all
+        options:
+          - full
+          - pages_only
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    if: >-
+      inputs.target == 'full'
+
     permissions:
       contents: write
 
+    runs-on: ubuntu-latest
     steps:
       - id: checkout
         uses: actions/checkout@v4
@@ -18,9 +29,12 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-  publish-listing:
-    needs: release
-    runs-on: ubuntu-latest
+  pages:
+    needs: [release]
+    if: >-
+      !cancelled()
+      && needs.release.result != 'failure'
+
     permissions:
       contents: read
       pages: write
@@ -29,23 +43,24 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
+    runs-on: ubuntu-latest
     steps:
       - id: checkout
         uses: actions/checkout@v4
 
-      - id: pages
+      - id: configure_pages
         uses: actions/configure-pages@v5
 
       - id: build_listing
         run: ./.github/scripts/build_listing.sh
         env:
           GH_TOKEN: ${{ github.token }}
-          PAGES_BASE_URL: ${{ steps.pages.outputs.base_url }}
+          GH_PAGES_BASE_URL: ${{ steps.configure_pages.outputs.base_url }}
 
-      - id: upload
+      - id: upload_pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: ./public
 
-      - id: deployment
+      - id: deploy_pages
         uses: actions/deploy-pages@v4
