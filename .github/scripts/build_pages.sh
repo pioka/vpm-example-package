@@ -30,7 +30,7 @@ for tag in $(gh release list --json tagName | jq -r '.[].tagName'); do
     release_json_content="$(echo "$release_json_content" | jq --arg v "https://github.com/${GITHUB_REPOSITORY}/releases/download/$tag/$release_zip" '.url = $v')"
     release_json_content="$(echo "$release_json_content" | jq --arg v "$release_zip_sha256" '.zipSHA256 = $v')"
 
-    vpm_json="$(echo "$vpm_json" | jq --argjson d "$release_json_content" ".versions.\"${tag:1}\" = \$d")"
+    vpm_json="$(echo "$vpm_json" | jq --argjson d "$release_json_content" ".packages.\"${PACKAGE_ID}\".versions.\"${tag:1}\" = \$d")"
   fi
   rm package.json
 done
