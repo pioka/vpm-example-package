@@ -50,7 +50,6 @@ cat > index.html <<HTML
 <body>
   <main>
     <h1>${PACKAGE_NAME}</h1>
-    <p>VPM listing for use with the VRChat Creator Companion (VCC).</p>
     <table>
       <tr>
         <td>${GH_PAGES_BASE_URL}/vpm.json</td>
