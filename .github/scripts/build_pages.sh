@@ -45,6 +45,7 @@ cat > index.html <<HTML
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="${PACKAGE_DESCRIPTION}">
+  <meta http-equiv="refresh" content="0;URL=vcc://vpm/addRepo?url=${GH_PAGES_BASE_URL}/vpm.json">
   <title>${PACKAGE_NAME}</title>
 </head>
 <body>
