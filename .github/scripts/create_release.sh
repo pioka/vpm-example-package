@@ -16,6 +16,12 @@ fi
 git tag "$GIT_TAG"
 git push origin "$GIT_TAG"
 
+# mark as pre-release when version is a SemVer pre-release (contains '-')
+PRERELEASE_FLAG=()
+if [[ "$PACKAGE_VERSION" == *-* ]]; then
+  PRERELEASE_FLAG=(--prerelease)
+fi
+
 # create Release
 zip -x '.*' -r "$PACKAGE_ZIP" .
-gh release create --generate-notes "$GIT_TAG" package.json "$PACKAGE_ZIP"
+gh release create --generate-notes "${PRERELEASE_FLAG[@]}" "$GIT_TAG" package.json "$PACKAGE_ZIP"
