@@ -20,21 +20,33 @@ vpm_json="$(echo "$vpm_json" | jq --arg v "$PACKAGE_AUTHOR" '.author = $v')"
 vpm_json="$(echo "$vpm_json" | jq --arg v "$GH_PAGES_BASE_URL/vpm.json" '.url = $v')"
 
 # vpm.json: リリースのpackage.jsonとzipファイルのURLを組み込み
-for tag in $(gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" --jq '.[] | select(.draft == false) | .tag_name'); do
-  release_json="$(gh release view "$tag" --json assets --jq '.assets[]|select(.name|test("^package.json$")).name' | head -1)"
-  release_zip="$(gh release view "$tag" --json assets --jq '.assets[]|select(.name|test(".zip$")).name' | head -1)"
-  release_zip_sha256="$(gh release view "$tag" --json assets --jq '.assets[]|select(.name|test(".zip$")).digest' | head -1 | cut -d: -f2)"
+# 全ページをまとめて取得し変数に受ける（API取得失敗時は set -e でここで停止する）。
+# --slurp は各ページのJSON配列を [[...],[...]] の配列として返すため、後段で .[][] で展開する。
+releases_json="$(gh api --paginate --slurp "repos/${GITHUB_REPOSITORY}/releases")"
 
-  if [ -n "$release_json" ] && [ -n "$release_zip" ]; then
-    gh release download "$tag" --clobber --pattern "package.json"
-    release_json_content="$(jq . package.json)"
-    release_json_content="$(echo "$release_json_content" | jq --arg v "https://github.com/${GITHUB_REPOSITORY}/releases/download/$tag/$release_zip" '.url = $v')"
-    release_json_content="$(echo "$release_json_content" | jq --arg v "$release_zip_sha256" '.zipSHA256 = $v')"
+imported=0
+while IFS= read -r release; do
+  tag="$(echo "$release" | jq -r '.tag_name')"
+  package_url="$(echo "$release" | jq -r 'first(.assets[] | select(.name == "package.json") | .browser_download_url) // ""')"
+  zip_name="$(echo "$release" | jq -r 'first(.assets[] | select(.name | endswith(".zip")) | .name) // ""')"
+  zip_sha256="$(echo "$release" | jq -r 'first(.assets[] | select(.name | endswith(".zip")) | .digest) // ""' | cut -d: -f2)"
 
-    vpm_json="$(echo "$vpm_json" | jq --argjson d "$release_json_content" ".packages.\"${PACKAGE_ID}\".versions.\"${tag:1}\" = \$d")"
+  if [ -n "$package_url" ] && [ -n "$zip_name" ]; then
+    # package.jsonはリリースアセットのURLから直接取得する（取得失敗時は set -e で停止）
+    package_content="$(curl -fsSL "$package_url")"
+    package_content="$(echo "$package_content" | jq --arg v "https://github.com/${GITHUB_REPOSITORY}/releases/download/$tag/$zip_name" '.url = $v')"
+    package_content="$(echo "$package_content" | jq --arg v "$zip_sha256" '.zipSHA256 = $v')"
+
+    vpm_json="$(echo "$vpm_json" | jq --argjson d "$package_content" ".packages.\"${PACKAGE_ID}\".versions.\"${tag:1}\" = \$d")"
+    imported=$((imported + 1))
   fi
-  rm package.json
-done
+done < <(echo "$releases_json" | jq -c '.[][] | select(.draft == false)')
+
+# 1件も取り込めなかった場合は、空リスティングの配信を防ぐためビルドを失敗させる
+if [ "$imported" -eq 0 ]; then
+  echo "ERROR: no releases were imported into vpm.json." >&2
+  exit 1
+fi
 
 echo "$vpm_json" > vpm.json
 
