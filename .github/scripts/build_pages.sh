@@ -20,7 +20,7 @@ vpm_json="$(echo "$vpm_json" | jq --arg v "$PACKAGE_AUTHOR" '.author = $v')"
 vpm_json="$(echo "$vpm_json" | jq --arg v "$GH_PAGES_BASE_URL/vpm.json" '.url = $v')"
 
 # vpm.json: リリースのpackage.jsonとzipファイルのURLを組み込み
-for tag in $(gh release list --json tagName | jq -r '.[].tagName'); do
+for tag in $(gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" --jq '.[] | select(.draft == false) | .tag_name'); do
   release_json="$(gh release view "$tag" --json assets --jq '.assets[]|select(.name|test("^package.json$")).name' | head -1)"
   release_zip="$(gh release view "$tag" --json assets --jq '.assets[]|select(.name|test(".zip$")).name' | head -1)"
   release_zip_sha256="$(gh release view "$tag" --json assets --jq '.assets[]|select(.name|test(".zip$")).digest' | head -1 | cut -d: -f2)"
