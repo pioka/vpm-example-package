@@ -3,6 +3,14 @@ set -euxo pipefail
 
 PACKAGE_NAME="$(jq -r '.name' package.json)"
 PACKAGE_VERSION="$(jq -r '.version' package.json)"
+
+# validate version is a SemVer (X.Y.Z with optional pre-release / build metadata)
+SEMVER_RE='^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?(\+[0-9A-Za-z.-]+)?$'
+if [[ ! "$PACKAGE_VERSION" =~ $SEMVER_RE ]]; then
+  echo "ERROR: version '$PACKAGE_VERSION' is not a valid SemVer. Fix package.json."
+  exit 1
+fi
+
 PACKAGE_ZIP="${PACKAGE_NAME}-${PACKAGE_VERSION}.zip"
 GIT_TAG="v${PACKAGE_VERSION}"
 
