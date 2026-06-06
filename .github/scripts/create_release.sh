@@ -12,10 +12,6 @@ if git ls-remote --tags origin | cut -f2 | grep -qF "refs/tags/$GIT_TAG"; then
   exit 1
 fi
 
-# push tag
-git tag "$GIT_TAG"
-git push origin "$GIT_TAG"
-
 # mark as pre-release when version is a SemVer pre-release (contains '-')
 PRERELEASE_FLAG=()
 if [[ "$PACKAGE_VERSION" == *-* ]]; then
@@ -23,5 +19,7 @@ if [[ "$PACKAGE_VERSION" == *-* ]]; then
 fi
 
 # create Release
+# gh が --target のコミットにタグを生成するため、タグ生成とリリース作成は
+# アトミックに行われる（リリース作成失敗時にタグだけが残ることを防ぐ）。
 zip -x '.*' -r "$PACKAGE_ZIP" .
-gh release create --generate-notes "${PRERELEASE_FLAG[@]}" "$GIT_TAG" package.json "$PACKAGE_ZIP"
+gh release create --generate-notes --target "$GITHUB_SHA" "${PRERELEASE_FLAG[@]}" "$GIT_TAG" package.json "$PACKAGE_ZIP"
